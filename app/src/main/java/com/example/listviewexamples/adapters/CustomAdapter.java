@@ -11,16 +11,22 @@ import android.widget.TextView;
 import com.example.listviewexamples.R;
 import com.example.listviewexamples.models.CustomItemModel;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomAdapter extends BaseAdapter {
 
     Context context;
     List<CustomItemModel> items;
+    ArrayList<CustomItemModel> arrayList;
 
     public CustomAdapter(Context context, List<CustomItemModel> items) {
         this.context = context;
         this.items = items;
+
+        this.arrayList = new ArrayList<CustomItemModel>();
+        this.arrayList.addAll(items);
     }
 
     @Override
@@ -65,12 +71,34 @@ public class CustomAdapter extends BaseAdapter {
         viewHolder.onClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewHolder.onClick.setBackgroundResource(R.drawable.ic_baseline_star_24);
+                if(viewHolder.check == false) {
+                    viewHolder.onClick.setBackgroundResource(R.drawable.ic_baseline_star_24);
+                    viewHolder.check = true;
+                } else {
+                    viewHolder.onClick.setBackgroundResource(R.drawable.ic_baseline_star_border_24);
+                    viewHolder.check = false;
+                }
+
                 notifyDataSetChanged();
             }
         });
 
         return view;
+    }
+
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        items.clear();
+        if(charText.length() == 0) {
+            items.addAll(arrayList);
+        } else {
+            for(CustomItemModel item: arrayList) {
+                if(item.getTitle().toLowerCase(Locale.getDefault()).contains(charText)) {
+                    items.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     private class ViewHolder {
@@ -80,5 +108,6 @@ public class CustomAdapter extends BaseAdapter {
         TextView textSubtitle;
         TextView time;
         ImageButton onClick;
+        boolean check = false;
     }
 }

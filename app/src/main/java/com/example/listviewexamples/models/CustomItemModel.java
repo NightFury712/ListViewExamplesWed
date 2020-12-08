@@ -7,6 +7,9 @@ public class CustomItemModel {
     String subtitle;
     String time;
 
+    public CustomItemModel() {
+    }
+
     public CustomItemModel(String textAvt, String title, String subtitle, String time) {
 //        this.avatarResource = avatarResource;
         this.textAvt = textAvt;

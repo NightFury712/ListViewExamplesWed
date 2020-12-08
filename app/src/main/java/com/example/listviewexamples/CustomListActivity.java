@@ -1,7 +1,10 @@
 package com.example.listviewexamples;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +22,8 @@ import io.bloco.faker.Faker;
 public class CustomListActivity extends AppCompatActivity {
 
     List<CustomItemModel> items;
+    CustomAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,7 @@ public class CustomListActivity extends AppCompatActivity {
         Faker faker = new Faker();
 
         items = new ArrayList<>();
+
         for (int i = 0; i < 20; i++) {
             String name = faker.name.name();
             String textAvt = name.substring(0,1);
@@ -39,8 +45,29 @@ public class CustomListActivity extends AppCompatActivity {
             String timecv = df.format(time);
             items.add(new CustomItemModel(textAvt, name, title, timecv));
         }
-        CustomAdapter adapter = new CustomAdapter(this, items);
+
+        adapter = new CustomAdapter(this, items);
         ListView listView = findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_view, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menuSearch).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(CustomListActivity.this, query, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filter(newText.trim());
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 }
